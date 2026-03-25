@@ -10,6 +10,7 @@
     <h1>Aerospace Jam Example</h1>
     <!-- Notice how the span that contains the placeholder value has an ID. We reference this ID later in the script, and it lets us pick this element in specific. -->
     <p><b>Random number chosen by the Pi: </b> <span id="randomNumber">Loading...</span></p>
+    <p><b>Lidar Values: </b> <span id="lidar">Loading...</span></p>
     <script>
         // This function wrapper (addEventListener) makes the inner contents run only when the DOM (Document Object Model) content is loaded.
         // In simpler terms, this runs once the page has finished loading.
@@ -20,8 +21,10 @@
             socket.on('update_data', function(msg) {
                 // Now, we get the span that we defined before by its ID...
                 var randomNumberSpan = document.getElementById('randomNumber');
-                // And we set its content to the random number we just got from the server.
+                var lidarDistanceSpan = document.getElementById('lidar');
+				// And we set its content to the random number we just got from the server.
                 randomNumberSpan.textContent = msg.randomNumber;
+		lidarDistanceSpan.textContent = msg.lidar;
                 // For new sensors, we can really easily repeat this! For instance, if you added a piece to the data on the server side called "mySensor", as in the other example, you could do:
                 // var mySensorSpan = document.getElementById('mySensor');
                 // mySensorSpan.textContent = msg.mySensor;
