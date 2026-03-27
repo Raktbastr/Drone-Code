@@ -2,15 +2,28 @@
 <html>
 <head>
     <!-- This sets your page title. You can change this to whatever you want! -->
-    <title>Aerospace Jam Example</title>
+    <title>Team 2B2T Drone</title>
     <!-- The below script tag is used to load socket.io from the server. -->
     <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
 </head>
 <body>
-    <h1>Aerospace Jam Example</h1>
+    <h1>Team 2B2T Drone</h1>
     <!-- Notice how the span that contains the placeholder value has an ID. We reference this ID later in the script, and it lets us pick this element in specific. -->
-    <p><b>Random number chosen by the Pi: </b> <span id="randomNumber">Loading...</span></p>
-    <p><b>Lidar Values: </b> <span id="lidar">Loading...</span></p>
+    <p>Random Number (lost connection if stopped):  <span id="randNum">Loading...</span></p>
+    <br><br>
+    <p><b>Barometric Sensor Values</b></p>
+    <p>Temperature:  <span id="bmpTemp">Loading...</span></p>
+    <p>Pressure:  <span id="pressure">Loading...</span></p>
+    <p>Altitude:  <span id="altitude">Loading...</span></p>
+    <br><br>
+    <p><b>Accelerometer Sensor Values</b></p>
+    <p>Acceleration:  <span id="accel">Loading...</span></p>
+    <p>Gyroscope:  <span id="gyro">Loading...</span></p>
+    <br><br>
+    <p><b>Lidar Sensor Values</b></p>
+    <p>Distance:  <span id="distance">Loading...</span></p>
+    <p>Strength:  <span id="strength">Loading...</span></p>
+    <p>Temperature:  <span id="lidarTemp">Loading...</span></p>
     <script>
         // This function wrapper (addEventListener) makes the inner contents run only when the DOM (Document Object Model) content is loaded.
         // In simpler terms, this runs once the page has finished loading.
@@ -19,15 +32,25 @@
             var socket = io.connect('http://' + document.domain + ':' + location.port);
             // Now, we subscribe to the server's "update_data" events - this is sent every second by the background thread, but you can change both the events' names and the speed of these events being sent.
             socket.on('update_data', function(msg) {
-                // Now, we get the span that we defined before by its ID...
-                var randomNumberSpan = document.getElementById('randomNumber');
-                var lidarDistanceSpan = document.getElementById('lidar');
-				// And we set its content to the random number we just got from the server.
+                var randomNumberSpan = document.getElementById('randNum');
+                var bmpTempSpan = document.getElementById('bmpTemp');
+                var bmpPressureSpan = document.getElementById('pressure');
+                var bmpAltSpan = document.getElementById('altitude');
+                var accelSpan = document.getElementById('accel');
+                var gyroSpan = document.getElementById('gyro');
+                var distanceSpan = document.getElementById('distance');
+                var strengthSpan = document.getElementById('strength');
+                var lidarTempSpan = document.getElementById('lidarTemp');
+
                 randomNumberSpan.textContent = msg.randomNumber;
-		lidarDistanceSpan.textContent = msg.lidar;
-                // For new sensors, we can really easily repeat this! For instance, if you added a piece to the data on the server side called "mySensor", as in the other example, you could do:
-                // var mySensorSpan = document.getElementById('mySensor');
-                // mySensorSpan.textContent = msg.mySensor;
+		        bmpTempSpan.textContent = msg.bmpTemp;
+                bmpPressureSpan.textContent = msg.bmpPressure;
+                bmpAltSpan.textContent = msg.bmpAltitude;
+                accelSpan.textContent = msg.mpuAccel;
+                gyroSpan.textContent = msg.mpuGyro; 
+                distanceSpan.textContent = msg.tflDistance;
+                strengthSpan.textContent = msg.tflStrength;
+                lidarTempSpan.textContent = msg.tflTemp;
             });
         });
     </script>
