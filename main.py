@@ -5,9 +5,12 @@ from flask_socketio import SocketIO
 from tfluna import TFLuna
 from bmp180 import BMP180
 from mpu6050 import mpu6050
+from picamera2 import Picamera2
+import io
+import base64
 import random
 
-# Here, we create the neccesary base app. You don't need to worry about this.
+# App initalization
 app = Flask(__name__)
 socketio = SocketIO(app)
 
@@ -17,6 +20,10 @@ mpu = mpu6050(0x68)
 tfluna = TFLuna()
 tfluna.open()
 tfluna.set_samp_rate(10)
+picam2 = Picamera2
+camera_config = picam2.create_preview_configuration(main={"size": (640,480)})
+picam2.configure(camera_config)
+picam2.start()
 
 # tfl Class to format the getters like the other sensors.
 class tfl:
@@ -69,6 +76,15 @@ def background_thread():
 def handle_connect():
     print('Client connected')
     socketio.start_background_task(target=background_thread)
+
+@socketio.on('request_image')
+def handle_image_request():
+    stream = io.BytesIO()
+    picam2.capture_file(stream, format='jpeg')
+    stream.seek(0)
+    b64_image = base64.b64encode(stream.read()).decode('utf-8')
+    socketio.emit('new_image', {'image_data': b64_image})
+    print("Image sent")
 
 # This function is called
 def main():

@@ -5,25 +5,24 @@
     <title>Team 2B2T Drone</title>
     <!-- The below script tag is used to load socket.io from the server. -->
     <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
-</head>
-<body>
     <h1>Team 2B2T Drone</h1>
     <!-- Notice how the span that contains the placeholder value has an ID. We reference this ID later in the script, and it lets us pick this element in specific. -->
-    <p>Random Number (lost connection if stopped):  <span id="randNum">Loading...</span></p>
-    <br><br>
+    <p>Connection Status:  <span id="status">Loading...</span></p>
     <p><b>Barometric Sensor Values</b></p>
     <p>Temperature:  <span id="bmpTemp">Loading...</span></p>
     <p>Pressure:  <span id="pressure">Loading...</span></p>
     <p>Altitude:  <span id="altitude">Loading...</span></p>
-    <br><br>
     <p><b>Accelerometer Sensor Values</b></p>
     <p>Acceleration:  <span id="accel">Loading...</span></p>
     <p>Gyroscope:  <span id="gyro">Loading...</span></p>
-    <br><br>
     <p><b>Lidar Sensor Values</b></p>
     <p>Distance:  <span id="distance">Loading...</span></p>
     <p>Strength:  <span id="strength">Loading...</span></p>
     <p>Temperature:  <span id="lidarTemp">Loading...</span></p>
+    <h2>Camera</h2>
+    <button id="takePictureButton">Take Picture</button>
+    <br>
+    <img id="cameraImage" src="" alt="Live from Pi!" style="width: 640px; height: 480px; border: 1px solid black;">
     <script>
         // This function wrapper (addEventListener) makes the inner contents run only when the DOM (Document Object Model) content is loaded.
         // In simpler terms, this runs once the page has finished loading.
@@ -51,6 +50,17 @@
                 distanceSpan.textContent = msg.tflDistance;
                 strengthSpan.textContent = msg.tflStrength;
                 lidarTempSpan.textContent = msg.tflTemp;
+
+                var pictureButton = document.getElementById('picButton');
+                var image = document.getElementById('cameraImage');
+                pictureButton.addEventListener('click', function() {
+                    console.log('Requesting image from server...');
+                    socket.emit('request_image');
+                });
+                socket.on('new_image', function(msg) {
+                    console.log('Recieved image');
+                cameraImage.src = 'data:image/jpeg;base64,' + msg.image_data;
+                });
             });
         });
     </script>
